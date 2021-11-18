@@ -89,6 +89,65 @@ public class KubernetesSessionCli {
         return effectiveConfiguration;
     }
 
+    public int run(Configuration configuration)throws FlinkException, CliArgsException {
+        final ClusterClientFactory<String> kubernetesClusterClientFactory =
+                clusterClientServiceLoader.getClusterClientFactory(configuration);
+
+        final ClusterDescriptor<String> kubernetesClusterDescriptor =
+                kubernetesClusterClientFactory.createClusterDescriptor(configuration);
+
+        try {
+            final ClusterClient<String> clusterClient;
+            String clusterId = kubernetesClusterClientFactory.getClusterId(configuration);
+            final boolean detached = !configuration.get(DeploymentOptions.ATTACHED);
+            final FlinkKubeClient kubeClient =
+                    FlinkKubeClientFactory.getInstance().fromConfiguration(configuration, "client");
+
+            // Retrieve or create a session cluster.
+            if (clusterId != null && kubeClient.getRestService(clusterId).isPresent()) {
+                clusterClient = kubernetesClusterDescriptor.retrieve(clusterId).getClusterClient();
+            } else {
+                clusterClient =
+                        kubernetesClusterDescriptor
+                                .deploySessionCluster(
+                                        kubernetesClusterClientFactory.getClusterSpecification(
+                                                configuration))
+                                .getClusterClient();
+                clusterId = clusterClient.getClusterId();
+            }
+
+            try {
+                if (!detached) {
+                    Tuple2<Boolean, Boolean> continueRepl = new Tuple2<>(true, false);
+                    try (BufferedReader in = new BufferedReader(new InputStreamReader(System.in))) {
+                        while (continueRepl.f0) {
+                            continueRepl = repStep(in);
+                        }
+                    } catch (Exception e) {
+                        LOG.warn(
+                                "Exception while running the interactive command line interface.",
+                                e);
+                    }
+                    if (continueRepl.f1) {
+                        kubernetesClusterDescriptor.killCluster(clusterId);
+                    }
+                }
+                clusterClient.close();
+                kubeClient.close();
+            } catch (Exception e) {
+                LOG.info("Could not properly shutdown cluster client.", e);
+            }
+        } finally {
+            try {
+                kubernetesClusterDescriptor.close();
+            } catch (Exception e) {
+                LOG.info("Could not properly close the kubernetes cluster descriptor.", e);
+            }
+        }
+
+        return 0;
+    }
+
     private int run(String[] args) throws FlinkException, CliArgsException {
         final Configuration configuration = getEffectiveConfiguration(args);
 

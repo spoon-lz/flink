@@ -20,16 +20,20 @@ package org.apache.flink.kubernetes.kubeclient;
 
 import org.apache.flink.client.deployment.ClusterSpecification;
 import org.apache.flink.configuration.BlobServerOptions;
+import org.apache.flink.configuration.Configuration;
 import org.apache.flink.configuration.DeploymentOptions;
+import org.apache.flink.configuration.GlobalConfiguration;
 import org.apache.flink.configuration.JobManagerOptions;
 import org.apache.flink.configuration.RestOptions;
 import org.apache.flink.core.testutils.FlinkMatchers;
 import org.apache.flink.kubernetes.KubernetesClientTestBase;
 import org.apache.flink.kubernetes.KubernetesTestUtils;
+import org.apache.flink.kubernetes.cli.KubernetesSessionCli;
 import org.apache.flink.kubernetes.configuration.KubernetesConfigOptions;
 import org.apache.flink.kubernetes.configuration.KubernetesConfigOptionsInternal;
 import org.apache.flink.kubernetes.configuration.KubernetesDeploymentTarget;
 import org.apache.flink.kubernetes.entrypoint.KubernetesSessionClusterEntrypoint;
+import org.apache.flink.kubernetes.executors.KubernetesSessionClusterExecutor;
 import org.apache.flink.kubernetes.kubeclient.decorators.ExternalServiceDecorator;
 import org.apache.flink.kubernetes.kubeclient.factory.KubernetesJobManagerFactory;
 import org.apache.flink.kubernetes.kubeclient.parameters.KubernetesJobManagerParameters;
@@ -138,6 +142,23 @@ public class Fabric8FlinkKubeClientTest extends KubernetesClientTestBase {
         this.kubernetesJobManagerSpecification =
                 KubernetesJobManagerFactory.buildKubernetesJobManagerSpecification(
                         new FlinkPod.Builder().build(), kubernetesJobManagerParameters);
+    }
+
+    @Test
+    public void testCreateSession() throws Exception{
+        String confDir = "/Users/spoon/Desktop/work/code/github/flink-patch-0825/flink/flink-dist/src/main/resources/";
+        final Configuration sessionConf = GlobalConfiguration.loadConfiguration(confDir);
+        sessionConf.setString("state.checkpoints.dir", "hdfs://streaming-yarn-hdfs-ys/tmp/flink/k8s");
+        sessionConf.setString("high-availability.storageDir", "hdfs://streaming-yarn-hdfs-ys/tmp/flink/k8s/HA");
+        sessionConf.setString(KubernetesConfigOptions.KUBE_CONFIG_FILE,"/Users/spoon/Desktop/work/k8s/kube/config_nmg");
+        sessionConf.set(KubernetesConfigOptions.CLUSTER_ID,"lz-test-1104-3");
+        sessionConf.set(KubernetesConfigOptions.REST_SERVICE_EXPOSED_TYPE,
+                KubernetesConfigOptions.ServiceExposedType.NodePort);
+        sessionConf.set(
+                DeploymentOptions.TARGET,
+                KubernetesSessionClusterExecutor.NAME);
+        final KubernetesSessionCli cli = new KubernetesSessionCli(sessionConf, confDir);
+        cli.run(sessionConf);
     }
 
     @Test
