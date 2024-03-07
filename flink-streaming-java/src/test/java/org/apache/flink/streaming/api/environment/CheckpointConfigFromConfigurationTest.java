@@ -79,6 +79,50 @@ public class CheckpointConfigFromConfigurationTest {
                         .nonDefaultValue(
                                 CheckpointConfig.ExternalizedCheckpointCleanup
                                         .DELETE_ON_CANCELLATION),
+                TestSpec.testValue(
+                                org.apache.flink.configuration.ExternalizedCheckpointCleanup
+                                        .RETAIN_ON_CANCELLATION)
+                        .whenSetFromFile(
+                                "execution.checkpointing.externalized-checkpoint-retention",
+                                "RETAIN_ON_CANCELLATION")
+                        .viaSetter(CheckpointConfig::setExternalizedCheckpointCleanupV2)
+                        .getterVia(CheckpointConfig::getExternalizedCheckpointCleanupV2)
+                        .nonDefaultValue(
+                                org.apache.flink.configuration.ExternalizedCheckpointCleanup
+                                        .DELETE_ON_CANCELLATION),
+                TestSpec.testValue(
+                                org.apache.flink.configuration.ExternalizedCheckpointCleanup
+                                        .RETAIN_ON_CANCELLATION)
+                        .whenSetFromFile(
+                                "execution.checkpointing.externalized-checkpoint-retention",
+                                "RETAIN_ON_CANCELLATION")
+                        .viaSetter(
+                                (config, v) -> {
+                                    config.setExternalizedCheckpointCleanup(
+                                            CheckpointConfig.ExternalizedCheckpointCleanup.valueOf(
+                                                    v.name()));
+                                })
+                        .getterVia(CheckpointConfig::getExternalizedCheckpointCleanupV2)
+                        .nonDefaultValue(
+                                org.apache.flink.configuration.ExternalizedCheckpointCleanup
+                                        .DELETE_ON_CANCELLATION),
+                TestSpec.testValue(
+                                CheckpointConfig.ExternalizedCheckpointCleanup
+                                        .RETAIN_ON_CANCELLATION)
+                        .whenSetFromFile(
+                                "execution.checkpointing.externalized-checkpoint-retention",
+                                "RETAIN_ON_CANCELLATION")
+                        .viaSetter(
+                                (config, v) -> {
+                                    config.setExternalizedCheckpointCleanupV2(
+                                            org.apache.flink.configuration
+                                                    .ExternalizedCheckpointCleanup.valueOf(
+                                                    v.name()));
+                                })
+                        .getterVia(CheckpointConfig::getExternalizedCheckpointCleanup)
+                        .nonDefaultValue(
+                                CheckpointConfig.ExternalizedCheckpointCleanup
+                                        .DELETE_ON_CANCELLATION),
                 TestSpec.testValue(12)
                         .whenSetFromFile(
                                 "execution.checkpointing.tolerable-failed-checkpoints", "12")
