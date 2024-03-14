@@ -31,7 +31,6 @@ import org.apache.flink.runtime.state.FunctionInitializationContext;
 import org.apache.flink.runtime.state.FunctionSnapshotContext;
 import org.apache.flink.runtime.testutils.MiniClusterResourceConfiguration;
 import org.apache.flink.streaming.api.checkpoint.CheckpointedFunction;
-import org.apache.flink.streaming.api.environment.CheckpointConfig;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.sink.SinkFunction;
 import org.apache.flink.streaming.api.functions.source.SourceFunction;
@@ -168,8 +167,9 @@ public class RestoreUpgradedJobITCase extends TestLogger {
     private String runOriginalJob() throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         env.getCheckpointConfig()
-                .setExternalizedCheckpointCleanup(
-                        CheckpointConfig.ExternalizedCheckpointCleanup.RETAIN_ON_CANCELLATION);
+                .setExternalizedCheckpointCleanupRetention(
+                        org.apache.flink.configuration.ExternalizedCheckpointCleanup
+                                .RETAIN_ON_CANCELLATION);
         env.getCheckpointConfig().enableUnalignedCheckpoints(false);
         env.getCheckpointConfig()
                 .setCheckpointStorage("file://" + temporaryFolder.getRoot().getAbsolutePath());

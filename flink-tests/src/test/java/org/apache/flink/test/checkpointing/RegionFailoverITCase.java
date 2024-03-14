@@ -49,7 +49,6 @@ import org.apache.flink.streaming.api.CheckpointingMode;
 import org.apache.flink.streaming.api.checkpoint.CheckpointedFunction;
 import org.apache.flink.streaming.api.checkpoint.ListCheckpointed;
 import org.apache.flink.streaming.api.datastream.DataStreamUtils;
-import org.apache.flink.streaming.api.environment.CheckpointConfig;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.sink.RichSinkFunction;
 import org.apache.flink.streaming.api.functions.source.RichParallelSourceFunction;
@@ -174,8 +173,9 @@ public class RegionFailoverITCase extends TestLogger {
         env.setMaxParallelism(MAX_PARALLELISM);
         env.enableCheckpointing(200, CheckpointingMode.EXACTLY_ONCE);
         env.getCheckpointConfig()
-                .setExternalizedCheckpointCleanup(
-                        CheckpointConfig.ExternalizedCheckpointCleanup.RETAIN_ON_CANCELLATION);
+                .setExternalizedCheckpointCleanupRetention(
+                        org.apache.flink.configuration.ExternalizedCheckpointCleanup
+                                .RETAIN_ON_CANCELLATION);
         env.disableOperatorChaining();
 
         // Use DataStreamUtils#reinterpretAsKeyed to avoid merge regions and this stream graph would

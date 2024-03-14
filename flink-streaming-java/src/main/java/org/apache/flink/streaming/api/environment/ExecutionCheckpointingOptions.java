@@ -130,34 +130,36 @@ public class ExecutionCheckpointingOptions {
                                                                     .key()))
                                             .build());
 
-    public static final ConfigOption<ExternalizedCheckpointCleanup> EXTERNALIZED_CHECKPOINT_V2 =
-            ConfigOptions.key("execution.checkpointing.externalized-checkpoint-retention")
-                    .enumType(ExternalizedCheckpointCleanup.class)
-                    .defaultValue(ExternalizedCheckpointCleanup.NO_EXTERNALIZED_CHECKPOINTS)
-                    .withDescription(
-                            Description.builder()
-                                    .text(
-                                            "Externalized checkpoints write their meta data out to persistent storage and are not "
-                                                    + "automatically cleaned up when the owning job fails or is suspended (terminating with job "
-                                                    + "status %s or %s). In this case, you have to manually clean up the checkpoint state, both the "
-                                                    + "meta data and actual program state.",
-                                            TextElement.code("JobStatus#FAILED"),
-                                            TextElement.code("JobStatus#SUSPENDED"))
-                                    .linebreak()
-                                    .linebreak()
-                                    .text(
-                                            "The mode defines how an externalized checkpoint should be cleaned up on job cancellation. If "
-                                                    + "you choose to retain externalized checkpoints on cancellation you have to handle checkpoint "
-                                                    + "clean up manually when you cancel the job as well (terminating with job status %s).",
-                                            TextElement.code("JobStatus#CANCELED"))
-                                    .linebreak()
-                                    .linebreak()
-                                    .text(
-                                            "The target directory for externalized checkpoints is configured via %s.",
-                                            TextElement.code(
-                                                    CheckpointingOptions.CHECKPOINTS_DIRECTORY
-                                                            .key()))
-                                    .build());
+    public static final ConfigOption<ExternalizedCheckpointCleanup>
+            EXTERNALIZED_CHECKPOINT_RETENTION =
+                    ConfigOptions.key("execution.checkpointing.externalized-checkpoint-retention")
+                            .enumType(ExternalizedCheckpointCleanup.class)
+                            .defaultValue(ExternalizedCheckpointCleanup.NO_EXTERNALIZED_CHECKPOINTS)
+                            .withDescription(
+                                    Description.builder()
+                                            .text(
+                                                    "Externalized checkpoints write their meta data out to persistent storage and are not "
+                                                            + "automatically cleaned up when the owning job fails or is suspended (terminating with job "
+                                                            + "status %s or %s). In this case, you have to manually clean up the checkpoint state, both the "
+                                                            + "meta data and actual program state.",
+                                                    TextElement.code("JobStatus#FAILED"),
+                                                    TextElement.code("JobStatus#SUSPENDED"))
+                                            .linebreak()
+                                            .linebreak()
+                                            .text(
+                                                    "The mode defines how an externalized checkpoint should be cleaned up on job cancellation. If "
+                                                            + "you choose to retain externalized checkpoints on cancellation you have to handle checkpoint "
+                                                            + "clean up manually when you cancel the job as well (terminating with job status %s).",
+                                                    TextElement.code("JobStatus#CANCELED"))
+                                            .linebreak()
+                                            .linebreak()
+                                            .text(
+                                                    "The target directory for externalized checkpoints is configured via %s.",
+                                                    TextElement.code(
+                                                            CheckpointingOptions
+                                                                    .CHECKPOINTS_DIRECTORY
+                                                                    .key()))
+                                            .build());
 
     public static final ConfigOption<Duration> CHECKPOINTING_INTERVAL_DURING_BACKLOG =
             ConfigOptions.key("execution.checkpointing.interval-during-backlog")

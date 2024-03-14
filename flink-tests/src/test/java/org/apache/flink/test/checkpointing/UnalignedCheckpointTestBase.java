@@ -57,7 +57,6 @@ import org.apache.flink.runtime.state.FunctionInitializationContext;
 import org.apache.flink.runtime.state.FunctionSnapshotContext;
 import org.apache.flink.runtime.testutils.MiniClusterResourceConfiguration;
 import org.apache.flink.streaming.api.checkpoint.CheckpointedFunction;
-import org.apache.flink.streaming.api.environment.CheckpointConfig;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.co.RichCoFlatMapFunction;
 import org.apache.flink.streaming.api.functions.sink.RichSinkFunction;
@@ -755,8 +754,8 @@ public abstract class UnalignedCheckpointTestBase extends TestLogger {
             env.getCheckpointConfig().setForceUnalignedCheckpoints(true);
             if (generateCheckpoint) {
                 env.getCheckpointConfig()
-                        .setExternalizedCheckpointCleanup(
-                                CheckpointConfig.ExternalizedCheckpointCleanup
+                        .setExternalizedCheckpointCleanupRetention(
+                                org.apache.flink.configuration.ExternalizedCheckpointCleanup
                                         .RETAIN_ON_CANCELLATION);
             }
         }

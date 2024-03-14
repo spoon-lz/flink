@@ -33,7 +33,6 @@ import org.apache.flink.runtime.state.FunctionInitializationContext;
 import org.apache.flink.runtime.state.FunctionSnapshotContext;
 import org.apache.flink.runtime.state.hashmap.HashMapStateBackend;
 import org.apache.flink.streaming.api.checkpoint.CheckpointedFunction;
-import org.apache.flink.streaming.api.environment.CheckpointConfig;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.sink.PrintSinkFunction;
 import org.apache.flink.streaming.api.functions.source.RichParallelSourceFunction;
@@ -93,8 +92,9 @@ public class StickyAllocationAndLocalRecoveryTestJob {
                         Integer.MAX_VALUE, pt.getInt("restartDelay", 0)));
         if (pt.getBoolean("externalizedCheckpoints", false)) {
             env.getCheckpointConfig()
-                    .setExternalizedCheckpointCleanup(
-                            CheckpointConfig.ExternalizedCheckpointCleanup.RETAIN_ON_CANCELLATION);
+                    .setExternalizedCheckpointCleanupRetention(
+                            org.apache.flink.configuration.ExternalizedCheckpointCleanup
+                                    .RETAIN_ON_CANCELLATION);
         }
 
         String checkpointDir = pt.getRequired("checkpointDir");

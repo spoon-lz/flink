@@ -74,7 +74,6 @@ import org.apache.flink.streaming.api.checkpoint.CheckpointedFunction;
 import org.apache.flink.streaming.api.checkpoint.ListCheckpointed;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.IterativeStream;
-import org.apache.flink.streaming.api.environment.CheckpointConfig;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.KeyedProcessFunction;
 import org.apache.flink.streaming.api.functions.sink.SinkFunction;
@@ -468,8 +467,9 @@ public class SavepointITCase extends TestLogger {
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         env.setStateBackend(new EmbeddedRocksDBStateBackend(true));
         env.getCheckpointConfig()
-                .enableExternalizedCheckpoints(
-                        CheckpointConfig.ExternalizedCheckpointCleanup.RETAIN_ON_CANCELLATION);
+                .setExternalizedCheckpointCleanupRetention(
+                        org.apache.flink.configuration.ExternalizedCheckpointCleanup
+                                .RETAIN_ON_CANCELLATION);
         env.getCheckpointConfig().setCheckpointStorage(folder.newFolder().toURI());
         env.setParallelism(parallelism);
 

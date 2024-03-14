@@ -38,7 +38,6 @@ import org.apache.flink.runtime.state.StateBackend;
 import org.apache.flink.runtime.state.filesystem.FsStateBackend;
 import org.apache.flink.runtime.testutils.MiniClusterResourceConfiguration;
 import org.apache.flink.runtime.testutils.ZooKeeperTestUtils;
-import org.apache.flink.streaming.api.environment.CheckpointConfig;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.graph.StreamGraph;
 import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows;
@@ -429,8 +428,9 @@ public class ResumeCheckpointManuallyITCase extends TestLogger {
         env.setStateBackend(backend);
         env.setParallelism(PARALLELISM);
         env.getCheckpointConfig()
-                .setExternalizedCheckpointCleanup(
-                        CheckpointConfig.ExternalizedCheckpointCleanup.RETAIN_ON_CANCELLATION);
+                .setExternalizedCheckpointCleanupRetention(
+                        org.apache.flink.configuration.ExternalizedCheckpointCleanup
+                                .RETAIN_ON_CANCELLATION);
         env.setRestartStrategy(RestartStrategies.noRestart());
 
         env.addSource(new NotifyingInfiniteTupleSource(10_000))

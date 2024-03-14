@@ -1956,8 +1956,8 @@ public class StreamingJobGraphGenerator {
 
         CheckpointRetentionPolicy retentionAfterTermination;
         if (cfg.isExternalizedCheckpointsEnabled()) {
-            CheckpointConfig.ExternalizedCheckpointCleanup cleanup =
-                    cfg.getExternalizedCheckpointCleanup();
+            org.apache.flink.configuration.ExternalizedCheckpointCleanup cleanup =
+                    cfg.getExternalizedCheckpointCleanupRetention();
             // Sanity check
             if (cleanup == null) {
                 throw new IllegalStateException(

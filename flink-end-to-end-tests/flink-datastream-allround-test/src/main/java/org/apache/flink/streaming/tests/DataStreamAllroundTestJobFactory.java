@@ -38,7 +38,6 @@ import org.apache.flink.streaming.api.CheckpointingMode;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.KeyedStream;
 import org.apache.flink.streaming.api.datastream.WindowedStream;
-import org.apache.flink.streaming.api.environment.CheckpointConfig;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.source.SourceFunction;
 import org.apache.flink.streaming.api.functions.timestamps.BoundedOutOfOrdernessTimestampExtractor;
@@ -303,22 +302,24 @@ public class DataStreamAllroundTestJobFactory {
                             ENVIRONMENT_EXTERNALIZE_CHECKPOINT_CLEANUP.key(),
                             ENVIRONMENT_EXTERNALIZE_CHECKPOINT_CLEANUP.defaultValue());
 
-            CheckpointConfig.ExternalizedCheckpointCleanup cleanupMode;
+            org.apache.flink.configuration.ExternalizedCheckpointCleanup cleanupMode;
             switch (cleanupModeConfig) {
                 case "retain":
                     cleanupMode =
-                            CheckpointConfig.ExternalizedCheckpointCleanup.RETAIN_ON_CANCELLATION;
+                            org.apache.flink.configuration.ExternalizedCheckpointCleanup
+                                    .RETAIN_ON_CANCELLATION;
                     break;
                 case "delete":
                     cleanupMode =
-                            CheckpointConfig.ExternalizedCheckpointCleanup.DELETE_ON_CANCELLATION;
+                            org.apache.flink.configuration.ExternalizedCheckpointCleanup
+                                    .DELETE_ON_CANCELLATION;
                     break;
                 default:
                     throw new IllegalArgumentException(
                             "Unknown clean up mode for externalized checkpoints: "
                                     + cleanupModeConfig);
             }
-            env.getCheckpointConfig().setExternalizedCheckpointCleanup(cleanupMode);
+            env.getCheckpointConfig().setExternalizedCheckpointCleanupRetention(cleanupMode);
 
             final int tolerableDeclinedCheckpointNumber =
                     pt.getInt(

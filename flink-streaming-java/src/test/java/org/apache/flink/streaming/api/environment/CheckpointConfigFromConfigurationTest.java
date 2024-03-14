@@ -85,8 +85,8 @@ public class CheckpointConfigFromConfigurationTest {
                         .whenSetFromFile(
                                 "execution.checkpointing.externalized-checkpoint-retention",
                                 "RETAIN_ON_CANCELLATION")
-                        .viaSetter(CheckpointConfig::setExternalizedCheckpointCleanupV2)
-                        .getterVia(CheckpointConfig::getExternalizedCheckpointCleanupV2)
+                        .viaSetter(CheckpointConfig::setExternalizedCheckpointCleanupRetention)
+                        .getterVia(CheckpointConfig::getExternalizedCheckpointCleanupRetention)
                         .nonDefaultValue(
                                 org.apache.flink.configuration.ExternalizedCheckpointCleanup
                                         .DELETE_ON_CANCELLATION),
@@ -102,7 +102,7 @@ public class CheckpointConfigFromConfigurationTest {
                                             CheckpointConfig.ExternalizedCheckpointCleanup.valueOf(
                                                     v.name()));
                                 })
-                        .getterVia(CheckpointConfig::getExternalizedCheckpointCleanupV2)
+                        .getterVia(CheckpointConfig::getExternalizedCheckpointCleanupRetention)
                         .nonDefaultValue(
                                 org.apache.flink.configuration.ExternalizedCheckpointCleanup
                                         .DELETE_ON_CANCELLATION),
@@ -114,7 +114,7 @@ public class CheckpointConfigFromConfigurationTest {
                                 "RETAIN_ON_CANCELLATION")
                         .viaSetter(
                                 (config, v) -> {
-                                    config.setExternalizedCheckpointCleanupV2(
+                                    config.setExternalizedCheckpointCleanupRetention(
                                             org.apache.flink.configuration
                                                     .ExternalizedCheckpointCleanup.valueOf(
                                                     v.name()));
