@@ -106,6 +106,8 @@ public class ConfigOptionsDocGenerator {
     public static void main(String[] args) throws Exception {
         String outputDirectory = args[0];
         String rootDir = args[1];
+        System.out.println("outputDirectory=" + outputDirectory);
+        System.out.println("rootDir=" + rootDir);
 
         createTables(rootDir, outputDirectory);
 

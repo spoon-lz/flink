@@ -38,8 +38,11 @@ import static org.apache.flink.configuration.description.LinkElement.link;
  * Execution {@link ConfigOption} for configuring checkpointing related parameters.
  *
  * @see CheckpointConfig
+ * @deprecated All configuration items in this class have been moved to {@link
+ *     org.apache.flink.configuration.CheckpointingOptions}.
  */
 @PublicEvolving
+@Deprecated
 public class ExecutionCheckpointingOptions {
 
     @Deprecated
